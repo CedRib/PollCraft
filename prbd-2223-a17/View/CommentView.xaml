@@ -1,0 +1,60 @@
+﻿<f:UserControlBase x:Class="MyPoll.View.CommentView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+                   xmlns:vw="clr-namespace:MyPoll.View"
+                   xmlns:vm="clr-namespace:MyPoll.ViewModel"
+                   xmlns:fa="http://schemas.fontawesome.com/icons/fonts/properties"
+                   xmlns:f="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
+                   mc:Ignorable="d"
+                   d:DataContext="{d:DesignInstance Type=vm:PollDetailViewModel, IsDesignTimeCreatable=True}"
+                   x:Name="uc">
+    <!-- <f:UserControlBase.DataContext> -->
+    <!--     <vm:PollDetailViewModel x:Name="pdvm" /> -->
+    <!-- </f:UserControlBase.DataContext> -->
+    <StackPanel HorizontalAlignment="Stretch">
+        <TextBlock>
+            <Run Text="Comments" FontSize="16" FontWeight="Bold" />
+        </TextBlock>
+        <Grid HorizontalAlignment="Stretch" Visibility="{c:Binding AddCommentMode}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox HorizontalAlignment="Stretch" Height="50" Margin="0 0 10 0"
+                     Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Column="1" Content="Add Comment" HorizontalAlignment="Right" VerticalAlignment="Top"
+                    Padding="5"
+                    Command="{Binding PersistCommentCommand}" />
+        </Grid>
+        <TextBlock Margin="0 0 0 10" Visibility="{c:Binding !AddCommentMode}">
+            <Hyperlink Command="{Binding AddCommentCommand}">
+                <Run Text="add comment" />
+            </Hyperlink>
+        </TextBlock>
+        <ItemsControl ItemsSource="{Binding Comments}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderThickness="1" BorderBrush="#C4E0C4" HorizontalAlignment="Stretch">
+                        <StackPanel>
+                            <TextBlock Text="{Binding CommentText}" TextWrapping="Wrap" />
+                            <TextBlock FontSize="10" Margin="0 2 0 5">
+                                <Run Text=" -" />
+                                <Run Text="{Binding User.FullName}" Foreground="Blue" />
+                                <Run Text="{Binding DateTime}" />
+                                <Button fa:FontAwesome.Icon="Regular_TrashCan" Foreground="red" Width="20"
+                                        FontSize="15" Margin="0"
+                                        Padding="2" Background="Transparent" BorderBrush="Transparent"
+                                        Visibility="{c:Binding DataContext.IsDeletable, ElementName=uc}"
+                                        Command="{Binding DataContext.DeleteCommentCommand, ElementName=uc}"
+                                        CommandParameter="{Binding .}"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</f:UserControlBase>

@@ -1,0 +1,138 @@
+﻿<f:UserControlBase x:Class="MyPoll.View.PollDetailView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:f="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
+                   xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+                   xmlns:vw="clr-namespace:MyPoll.View"
+                   xmlns:vm="clr-namespace:MyPoll.ViewModel"
+                   mc:Ignorable="d"
+                   d:DataContext="{d:DesignInstance Type=vm:PollDetailViewModel, IsDesignTimeCreatable=True}"
+                   x:Name="uc">
+
+    <f:UserControlBase.DataContext>
+        <vm:PollDetailViewModel x:Name="vm" />
+    </f:UserControlBase.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock>
+            <Run Text="{Binding Poll.Title}" FontWeight="Bold" FontSize="25" />
+            <Run Text=" ( Created by " />
+            <Run Text="{Binding Poll.Creator.FullName}" FontWeight="Bold" />
+            <Run Text=")" />
+        </TextBlock>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Grid Background="#FFE6DC">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock  Margin="10"  VerticalAlignment="Center" Padding="2"
+                            Text="This Poll has been closed !" FontSize="16" FontWeight="Bold" Visibility="{c:Binding Poll.IsClosed}"/>
+                <Button Grid.Column="1" Content="Reopen" Width="60" Height="25" FontSize="12" Margin="10 0 10 0" Padding="2"
+                        Command="{Binding ReopenPollCommand}" Visibility="{c:Binding CanReopen}" />
+            </Grid>
+        </StackPanel>
+            <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto" Visibility="{c:Binding !EditPollMode}">
+            <!-- Le StackPanel qui structure les choses verticalement -->
+            <StackPanel Orientation="Vertical" Margin="10,10,10,10"
+                        HorizontalAlignment="Center" VerticalAlignment="Center">
+                <!-- La partie Header -->
+                <StackPanel Orientation="Horizontal" MinHeight="50">
+
+                    <!-- Le titre de la colonne participants -->
+                    <DockPanel VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Width="100">
+                        <Border x:Name="Border" DockPanel.Dock="Bottom" BorderBrush="Black" BorderThickness="1,1,0,1"
+                                SnapsToDevicePixels="True" Background="#FFE6E6E6" Margin="0" Height="30">
+                            <Grid Width="auto">
+                                <TextBlock Text="Participants" Margin="5" Padding="0" HorizontalAlignment="Stretch"
+                                           VerticalAlignment="Bottom"
+                                           Width="auto" Height="auto" TextAlignment="Center" TextWrapping="Wrap"
+                                           FontWeight="Bold">
+                                </TextBlock>
+                            </Grid>
+                        </Border>
+                    </DockPanel>
+
+                    <!-- Le "choicetext" des choix -->
+                    <ItemsControl ItemsSource="{Binding Choices  }">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+
+                            <DataTemplate>
+                                <Border BorderBrush="Black" BorderThickness="1,1,0,1" SnapsToDevicePixels="True"
+                                        Background="#FFE6E6E6" HorizontalAlignment="Stretch" Width="100">
+                                    <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <TextBlock Text="{Binding ChoiceText}" Padding="5" HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   Width="auto" TextAlignment="Center" TextWrapping="Wrap"
+                                                   FontWeight="Bold">
+                                        </TextBlock>
+                                    </DockPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Titre de La colonne "Actions" -->
+                    <Border BorderBrush="Black" BorderThickness="1, 0, 0, 0" Width="60">
+                        <DockPanel VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+                            <Border DockPanel.Dock="Bottom" BorderBrush="Black" BorderThickness="0,1,1,1"
+                                    SnapsToDevicePixels="True" Background="#FFE6E6E6" Margin="0"
+                                    VerticalAlignment="Bottom" Height="30">
+                                <Grid Width="auto">
+                                    <TextBlock Text="Actions" Margin="5" Padding="0" HorizontalAlignment="Center"
+                                               Width="auto" Height="auto" TextAlignment="Center" TextWrapping="Wrap"
+                                               FontWeight="Bold">
+                                    </TextBlock>
+                                </Grid>
+                            </Border>
+                        </DockPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Ligne bindée sur VoteParticipantsView -->
+                <ItemsControl ItemsSource="{Binding ParticipantsVM }">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <vw:VoteParticipantsView />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+        <StackPanel Grid.Row="3"  HorizontalAlignment="Stretch" Visibility="{c:Binding !EditPollMode}">
+            <DockPanel>
+                <vw:CommentView />
+            </DockPanel>
+        </StackPanel>
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 40 0 0" Visibility="{c:Binding !EditPollMode}">
+            <Button Content="Edit" HorizontalAlignment="Right"
+                    Padding="2" Margin="0 0 20 20" Width="75"
+                    Command="{Binding EditPollCommand}"
+                    CommandParameter="{Binding Poll}"
+                    Visibility="{c:Binding IsDeletable}"/>
+            <Button Content="Delete" HorizontalAlignment="Right"
+                    Padding="2" Margin="0 0 20 20" Width="75"
+                    Command="{Binding DeletePollCommand}"
+                    CommandParameter="{Binding Poll}"
+                    Visibility="{c:Binding IsDeletable}"/>
+        </StackPanel>
+        <UserControl Grid.Row="5" Visibility="{c:Binding EditPollMode}">
+            <vw:AddPollView DataContext="{Binding EditPollViewModel}"/>
+        </UserControl>
+    </Grid>
+</f:UserControlBase>
